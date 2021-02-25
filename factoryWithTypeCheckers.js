@@ -16,20 +16,18 @@ var checkPropTypes = require('./checkPropTypes');
 
 var printWarning = function() {};
 
-if (process.env.NODE_ENV !== 'production') {
-  printWarning = function(text) {
-    var message = 'Warning: ' + text;
-    if (typeof console !== 'undefined') {
-      console.error(message);
-    }
-    try {
-      // --- Welcome to debugging React ---
-      // This error was thrown as a convenience so that you can use this stack
-      // to find the callsite that caused this warning to fire.
-      throw new Error(message);
-    } catch (x) {}
-  };
-}
+printWarning = function(text) {
+  var message = 'Warning: ' + text;
+  if (typeof console !== 'undefined') {
+    console.error(message);
+  }
+  try {
+    // --- Welcome to debugging React ---
+    // This error was thrown as a convenience so that you can use this stack
+    // to find the callsite that caused this warning to fire.
+    throw new Error(message);
+  } catch (x) {}
+};
 
 function emptyFunctionThatReturnsNull() {
   return null;
@@ -168,10 +166,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   PropTypeError.prototype = Error.prototype;
 
   function createChainableTypeChecker(validate) {
-    if (process.env.NODE_ENV !== 'production') {
-      var manualPropTypeCallCache = {};
-      var manualPropTypeWarningCount = 0;
-    }
+    var manualPropTypeCallCache = {};
+    var manualPropTypeWarningCount = 0;
     function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
       componentName = componentName || ANONYMOUS;
       propFullName = propFullName || propName;
@@ -186,7 +182,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
           );
           err.name = 'Invariant Violation';
           throw err;
-        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+        } else if ( typeof console !== 'undefined') {
           // Old behavior for people using React.PropTypes
           var cacheKey = componentName + ':' + propName;
           if (
@@ -308,15 +304,13 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createEnumTypeChecker(expectedValues) {
     if (!Array.isArray(expectedValues)) {
-      if (process.env.NODE_ENV !== 'production') {
-        if (arguments.length > 1) {
-          printWarning(
-            'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
-            'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
-          );
-        } else {
-          printWarning('Invalid argument supplied to oneOf, expected an array.');
-        }
+      if (arguments.length > 1) {
+        printWarning(
+          'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
+          'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
+        );
+      } else {
+        printWarning('Invalid argument supplied to oneOf, expected an array.');
       }
       return emptyFunctionThatReturnsNull;
     }
@@ -366,7 +360,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createUnionTypeChecker(arrayOfTypeCheckers) {
     if (!Array.isArray(arrayOfTypeCheckers)) {
-      process.env.NODE_ENV !== 'production' ? printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      printWarning('Invalid argument supplied to oneOfType, expected an instance of array.');
       return emptyFunctionThatReturnsNull;
     }
 
